@@ -31,17 +31,21 @@ const errorHandler = (
     }
 
     return;
-  }
-
-  if (error instanceof ZodError) {
+  }else if (error instanceof ZodError) {
     const {
       message,
       path: [filed],
     } = error.errors[0];
     res.status(404).json({ error: `${filed} is ${message}` });
+    return
+
+  }else {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+    return;
   }
 
- 
+    
 };
 
 export default errorHandler;

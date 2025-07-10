@@ -1,25 +1,30 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import jwt, { VerifyErrors, JwtPayload } from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import asyncHandler from "../utilities/asyncHandler";
+import { UserPayload } from "../types";
 
-export const SECRET_KEY = "99c56018836cc95c7e6e14b8a1e5347a83e7b316a201e6dae7613a5a04a03a";
+const checkLogin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { authTokencodey } = req.cookies;
 
-export interface CustomRequest extends Request {
- token: string | JwtPayload;
-}
+    if (!authTokencodey) {
+      res.status(401).json({ message: "Unauthorized: Login to proceed" });
+      return;
+    }
+    jwt.verify(
+      authTokencodey,
+      process.env.secretKey!,
+      (err: VerifyErrors | null, decoded: JwtPayload | string | undefined) => {
+        if (err) {
+          res.status(401).json({ message: "Unauthorized: Login to proceed" });
+          return;
+        }
+        req.user = decoded as UserPayload;
+      }
+    );
 
-export const checkLogin = async (req: Request, res: Response, next: NextFunction) => {
- try {
-   const token = req.header('Authorization')?.replace('Bearer ', '');
+    next();
+  }
+);
 
-   if (!token) {
-     throw new Error();
-   }
-
-   const decoded = jwt.verify(token, SECRET_KEY);
-   (req as CustomRequest).token = decoded;
-
-   next();
- } catch (err) {
-   res.status(403).send('Forbiden action. Login to proceed');
- }
-};
+export default checkLogin; 

@@ -4,13 +4,13 @@ import updateBlog from "../../controller/blogs/updateBlog.controller";
 import blog from "../../controller/blogs/getBlog.controller";
 import getBlogs from "../../controller/blogs/getBlogs.controller";
 import deleteBlog from "../../controller/blogs/deleteBlog.controller";
-import { checkLogin } from "../../middlewares/isLogedin.middleware";
+import checkLogin from "../../middlewares/isLogedin.middleware";
 const blogs =  Router();
 
 blogs.post("/",checkLogin,createBlog)
-blogs.patch("/:id", updateBlog)
-blogs.get("/", getBlogs )
-blogs.get("/:id", blog)
-blogs.delete("/:id", deleteBlog)
+blogs.patch("/:id", checkLogin, updateBlog)
+blogs.get("/", checkLogin,getBlogs )
+blogs.get("/:id", checkLogin, blog)
+blogs.delete("/:id", checkLogin, deleteBlog)
 
 export default blogs;
