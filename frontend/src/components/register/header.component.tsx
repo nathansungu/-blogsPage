@@ -8,7 +8,7 @@ const HandleHeader = () => {
                 <Typography  sx={{fontSize:"2rem", fontWeight:600, }}>
                     codey bloging site 
                 </Typography>
-                <Typography sx={{fontSize:"1.5rem", fontWeight:500}}>
+                <Typography sx={{fontSize:{xm:"1rem", md:"1.5rem", }, fontWeight:500}}>
                     create account to see and post to see blogs
                 </Typography>
             </Stack>
