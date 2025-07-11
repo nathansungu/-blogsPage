@@ -13,7 +13,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
 
   const validIdentifiers = await client.user.findFirst({
     where: {
-      OR: [{ emailAddress:userInput.emailAddress }, { userName:userInput.userName}],
+      OR: [{ emailAddress:userInput.identifier }, { userName:userInput.identifier}],
     },
   });
   if (!validIdentifiers) {

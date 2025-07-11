@@ -5,10 +5,9 @@ import asyncHandler from "../../utilities/asyncHandler";
 const client = new PrismaClient();
 
 const getBlogs = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
-  const blogs = await client.posts.findMany({
   
-    where: { isDeleted: false , user_id: userId },
+  const blogs = await client.posts.findMany({
+    where: { isDeleted: false },
   });
   if (blogs) {
     res.status(200).send({ blogs: blogs });

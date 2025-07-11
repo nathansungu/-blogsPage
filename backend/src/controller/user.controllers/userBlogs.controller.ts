@@ -5,10 +5,10 @@ const client = new PrismaClient();
 
 const userBlogs = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.body;
-
+  const userId = req.user!.id;
   const blogs = await client.posts.findMany({
     where: {
-      user_id: id,
+      user_id: userId,
       isDeleted: false,
     },
   });
