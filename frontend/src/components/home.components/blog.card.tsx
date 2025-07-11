@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Card,
   CardContent,
   CardMedia,
@@ -15,7 +16,11 @@ type bls = {
   title: string;
   synopsis: string;
   content: string;
-  createdAt: Date;
+  createdAt: string;
+  user: {
+    firstName: string;
+    secondName: string;
+  };
 };
 const HandleCard = () => {
   const [error, setError] = useState("");
@@ -41,24 +46,43 @@ const HandleCard = () => {
 
   return (
     <>
-      <Grid container columns={12} sx={{ backgroundColor: "background.paper" }}>
-        <Stack sx={{gap:2, m:2}}>
-          {blogs.map((bls: bls) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4}}>
-              <Card  sx={{height:"30rem" , boxShadow:2}}>
-                <CardMedia
-                  component="img"
-                  image={bls.imageUrl}
-                  alt={bls.title}
-                  sx={{height:"15rem"}}
-                />
-                <CardContent>
-                  <Typography>{bls.synopsis}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Stack>
+      <Grid
+        container
+        columns={12}
+        gap={2}
+        sx={{ backgroundColor: "background.paper" , ml:1}}
+      >
+        {blogs.map((bls: bls, ind) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ind}>
+            <Card sx={{ height: "25rem", boxShadow: 2 }}>
+              <CardMedia
+                component="img"
+                image={bls.imageUrl}
+                alt={bls.title}
+                sx={{ height: "15rem" }}
+              />
+              <CardContent>
+                <Stack sx={{height:"4.6rem", overflow:"hidden"}}><Typography>{bls.synopsis}</Typography></Stack>
+              
+                <Stack direction="row" sx={{ alignItems: "center", mt:2 }}>
+                  <Avatar>
+                    {bls.user.firstName.charAt(0)}
+                    {bls.user.secondName.charAt(0)}
+                  </Avatar>
+
+                  <Stack sx={{ml:2}}direction="row" gap={2}>
+                    <Typography>{bls.user.firstName}</Typography>
+                    <Typography>{bls.user.secondName}</Typography>
+                  </Stack>
+                  <Stack direction="row" sx={{ ml: 1, alignItems:"center" }}>
+                    
+                    <Typography> {bls.createdAt.slice(0, 10)}</Typography>
+                  </Stack>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </>
   );
