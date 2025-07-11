@@ -8,6 +8,14 @@ const getBlogs = asyncHandler(async (req: Request, res: Response) => {
   
   const blogs = await client.posts.findMany({
     where: { isDeleted: false },
+    include:{
+      user:{
+        select:{
+          firstName:true,
+          secondName:true
+        }
+      }
+    }
   });
   if (blogs) {
     res.status(200).send({ blogs: blogs });

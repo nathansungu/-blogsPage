@@ -7,7 +7,16 @@ const blog = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const specificBlog = await client.posts.findUnique({
     where: { id: id, isDeleted: false },
-  });
+    include:{user:{
+      select:{
+        firstName:true,
+        secondName:true,
+        
+      }
+    }
+    }
+  }
+  );
   if (specificBlog) {
     const { isDeleted, updatedAt, ...others } = specificBlog;
     res.status(200).send({ blog: others });
