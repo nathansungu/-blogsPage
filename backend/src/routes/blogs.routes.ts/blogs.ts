@@ -9,7 +9,7 @@ const blogs =  Router();
 
 blogs.post("/",checkLogin,createBlog)
 blogs.patch("/:id", checkLogin, updateBlog)
-blogs.get("/", checkLogin,getBlogs )
+blogs.get("/", getBlogs )
 blogs.get("/:id", checkLogin, blog)
 blogs.delete("/:id", checkLogin, deleteBlog)
 
