@@ -6,14 +6,15 @@ const userSchema = z.object({
   secondName:  z.string(),
   userName: z.string(),
   emailAddress: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(5),
 });
 
-const loginSchema = z.object({
-    userName: z.string(),
-    emailAddress: z.string(),
-    password: z.string().min(8)
+const loginSchema = z
+.object({
+    identifier: z.string(),
+    password: z.string().min(5)
 })
+
 
 const updateUserSchema = z.object({
     firstName: z.string().optional(),
@@ -25,7 +26,7 @@ const updateUserSchema = z.object({
 const updatePasswordSchema = z.object({
     id: z.string(),
     oldPassword: z.string(),
-    newPassword: z.string().min(8)
+    newPassword: z.string().min(5)
 })
 
 export  {
