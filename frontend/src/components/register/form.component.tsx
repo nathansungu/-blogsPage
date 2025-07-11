@@ -1,186 +1,189 @@
-import { TextField, Button, Grid, Stack, Alert, Typography } from "@mui/material";
+import { TextField, Button, Grid, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "../../api/axios";
 
 type UserData = {
   firstName: string;
   secondName: string;
-  useName: string;
-  Password: string;
-  email: string;
-};
-
-const sendData = async (UserData: UserData) => {
-  const response = await axios.post(
-    "http://localhost:5000/api/auth/register",
-    UserData
-  );
-  return response.data;
+  userName: string;
+  password: string;
+  emailAddress: string;
 };
 
 const HandleForm = () => {
   const [firstName, setFirstName] = useState("");
   const [secondName, setSecondName] = useState("");
-  const [useName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [emailAddress, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [inputError, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [backedError, setBackendError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");  
 
-  // muatation hook
-  const [mutate, { isLoading, isError, error }] = useMutation(sendData);
+  const { isPending,isError, mutate } = useMutation({
+    mutationKey: ["registerUser"],
+    mutationFn: async (userData: UserData) => {
+      const response = await axiosInstance.post("/auth/register", userData);
 
-  const UserData = {
-    firstName,
-    secondName,
-    useName,
-    Password,
-    email,
+      return response.data;
+    },
+    onError: (error: any) => {
+      let reError  = error.response?.data?.message || "An error occurred";
+      setBackendError(reError);
+    },
+    onSuccess: () => {
+      setBackendError("");
+      setConfirmPasswordError("");
+
+      setFirstName("");
+      setSecondName("");
+      setUserName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      
+      
+      alert("Registration successful!");
+
+      //redirect to login
+      window.location.href = "/login";
+    },
+  });
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    //clear previous error messages
+    setBackendError("");
+    setConfirmPasswordError("");  
+
+   
+
+
+    const userData: UserData = {
+      firstName,
+      secondName,
+      userName,
+      password,
+      emailAddress,
+    };
+    mutate(userData);
   };
 
-  const handleSubmit = () => {
-    
-    mutate(UserData);
+  //NOTE: !! to convert a value to boolean
 
-    return;
-  };
   return (
-    <>
-      <Grid sx={{ mt: 1 }}>
-        <Stack sx={{ alignItems: "center" }}>
-          <form>
-            {isError && <Typography></Typography>}
-
-
-          <Stack sx={{ gap: 2, width: { xs: "90%", sm: "70%", md: "50%" } }}>
-            
-            <TextField
-              label="First Name"
-              variant="outlined"
-              required
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                let nameError = e.target.validity.valid;
-                if (!nameError) {
-                  setError(true);
-                  setErrorMessage("Please enter a valid first name.");
-                } else {
-                  setError(false);
-                  setErrorMessage("");
+    <Grid sx={{ mt: 1 }}>
+      <Stack sx={{ alignItems: "center" }}>
+        
+          <Stack sx={{  width: { xs: "90%", sm: "70%", md: "50%" } }}>
+            <form onSubmit={handleSubmit} style={{ width: "100%", alignItems: "center" }}>
+              {isError && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                  {
+                    backedError
+                  }
+                </Typography> 
+              )}
+                <TextField
+                label="First Name"
+                variant="outlined"
+                fullWidth
+                required
+                sx={{ mt: 1 }}
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+                />
+                <TextField
+                label="Second Name"
+                variant="outlined"
+                fullWidth
+                required
+                sx={{ mt: 1 }}
+                value={secondName}
+                onChange={(e) => {
+                  setSecondName(e.target.value);
+                }}
+                />
+                <TextField
+                label="User Name"
+                variant="outlined"
+                fullWidth
+                required
+                sx={{ mt: 1 }}
+                value={userName}
+                onChange={(e) => {
+                  setUserName(e.target.value);
+                }}
+                />
+                <TextField
+                label="Email"
+                type="email"
+                variant="outlined"
+                fullWidth
+                required
+                sx={{ mt: 1 }}
+                value={emailAddress}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                />
+                <TextField
+                label="Password"
+                variant="outlined"
+                type="password"
+                fullWidth
+                required
+                sx={{ mt: 1 }}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                />
+                <TextField
+                label="Confirm Password"
+                variant="outlined"
+                type="password"
+                fullWidth
+                required
+                sx={{ mt: 1}}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+                error={ password !== confirmPassword}
+                helperText={
+                  confirmPasswordError
+                  ? confirmPasswordError
+                  : password !== confirmPassword
+                  ? "Passwords do not match."
+                  : ""
                 }
-              }}
-              error={inputError}
-              helperText={inputError && errorMessage}
-            />
-            <TextField
-              label="second Name"
-              variant="outlined"
-              required
-              value={secondName}
-              onChange={(e) => {
-                setSecondName(e.target.value);
-                let secondNameError = e.target.validity.valid;
-                if (!secondNameError) {
-                  setError(true);
-                  setErrorMessage("Please enter a valid second name.");
-                } else {
-                  setError(false);
-                  setErrorMessage("");
-                }
-              }}
-              error={inputError}
-              helperText={inputError && errorMessage}
-            />
-            <TextField
-              label="User Name"
-              variant="outlined"
-              required
-              value={useName}
-              onChange={(e) => {
-                setUserName(e.target.value);
-                let nameError = e.target.validity.valid;
-                if (!nameError) {
-                  setError(true);
-                  setErrorMessage("Please enter a valid user name.");
-                } else {
-                  setError(false);
-                  setErrorMessage("");
-                }
-              }}
-              error={inputError}
-              helperText={inputError && errorMessage}
-            />
-            <TextField
-              label="Email"
-              type="email"
-              variant="outlined"
-              required
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                let emailError = e.target.validity.valid;
-                if (!emailError) {
-                  setError(true);
-                  setErrorMessage("Please enter a valid email address.");
-                } else {
-                  setError(false);
-                  setErrorMessage("");
-                }
-              }}
-              error={inputError}
-              helperText={inputError && errorMessage}
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              type="password"
-              required
-              value={Password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                let passwordError = e.target.validity.valid;
-                if (!passwordError) {
-                  setError(true);
-                  setErrorMessage("Please enter a valid password.");
-                } else {
-                  setError(false);
-                  setErrorMessage("");
-                }
-              }}
-              error={inputError}
-              helperText={inputError && errorMessage}
-            />
-            <TextField
-              label="Confirm Password"
-              variant="outlined"
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
-              error={Password !== confirmPassword}
-              helperText={
-                Password !== confirmPassword ? "Passwords do not match." : ""
-              }
-            />
+                />
+              <Stack sx={{ mt: 1 }}>
+              <Button type="submit" variant="contained" disabled={isPending}>
+                <Typography>Register</Typography>
+              </Button>
+              </Stack>
+              <Typography>
+                Already have an account?
+                <Button
+                  onClick={() => {
+                    window.location.href = "/login";
+                  }}
+                  sx={{ color: "primary.main", fontSize: "1rem", ml: 1 }}
+                >
+                  click to login
+                </Button>
+                </Typography>
+            </form>
           </Stack>
-          <Stack sx={{ mt: 2 }}>
-            <Button
-              disabled={isLoading}
-              variant="contained"
-              onClick={handleSubmit}
-            >
-              Submit
-            </Button>
-          </Stack>
-          </form>
-        </Stack>
-      </Grid>
-    </>
+      
+      </Stack>
+    </Grid>
   );
 };
+
 export default HandleForm;
