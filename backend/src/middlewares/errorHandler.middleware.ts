@@ -9,43 +9,54 @@ const errorHandler = (
   next: NextFunction
 ) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    console.error(error)
-    
+    console.error(error);
+
     switch (error.code) {
-      case 'P1001':
-        res.status(500).json("Server is off");
-        
+      case "P1001":
+        res.status(500).json({message:"Server is off"});
+
         break;
-      case 'P2002':
-              
-        const target = error.meta?.target ;    
-        
-        
-        res.status(500).send(`${target} is taken `)
+      case "P2002":
+        const target = error.meta?.target;
+
+        res.status(409).json({message:`${target} is taken `});
         break;
-        
 
       default:
-        res.status(500).json({message: "Oops!  something went wrong."})
+        res.status(500).json({ message: "Oops!  something went wrong." });
         break;
     }
 
     return;
-  }else if (error instanceof ZodError) {
+  } else if (error instanceof ZodError) {
     const {
       message,
       path: [filed],
     } = error.errors[0];
-    res.status(404).json({ error: `${filed} is ${message}` });
-    return
 
-  }else {
+    console.log(error);
+    switch (error.errors[0].code) {
+      case "invalid_type":
+        res.status(400).json({ message: `${filed} is ${message}` });
+        return;
+      case "too_small":
+        res.status(400).json({ message: `${filed} is to short` });
+        return;
+      case "too_big":
+        res.status(400).json({ message: "Input is too big" });
+        return;
+      case "invalid_union":
+        res.status(400).json({ message: "Invalid union type" });
+        return;
+      default:
+        res.status(400).json({ message: "Validation error" });
+        return;
+    }
+  } else {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
     return;
   }
-
-    
 };
 
 export default errorHandler;
