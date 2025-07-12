@@ -50,7 +50,7 @@ const HandleCard = () => {
         container
         columns={12}
         gap={2}
-        sx={{ backgroundColor: "background.paper" , ml:1}}
+        sx={{ backgroundColor: "background.paper" , ml:1, mt:3}}
       >
         {blogs.map((bls: bls, ind) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ind}>

@@ -70,8 +70,6 @@ const HandleForm = () => {
     mutate(userData);
   };
 
-  //NOTE: !! to convert a value to boolean
-
   return (
     <Grid sx={{ mt: 1 }}>
       <Stack sx={{ alignItems: "center" }}>

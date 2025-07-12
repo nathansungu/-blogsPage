@@ -16,12 +16,12 @@ const HandleHeader = () => {
           }}
         >
           <Typography sx={{ fontSize: "2rem", fontWeight: 600 }}>
-            codey bloging site
+            codey blogging site
           </Typography>
           <Typography
-            sx={{ fontSize: { xm: "1rem", md: "1.rem" }, fontWeight: 500 }}
+            sx={{ fontSize: { xs: "1rem", md: "1.2rem" }, fontWeight: 500 }}
           >
-            create account to see and post to see blogs
+            create account to see and post your blogs
           </Typography>
         </Stack>
       </Grid>
