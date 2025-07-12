@@ -28,7 +28,6 @@ const HandleCard = () => {
   const fetchBlogs = async () => {
     const response = await axiosInstance.get("/blogs");
     const { blogs } = response.data;
-    console.log(blogs);
     setBlogs(blogs);
     return;
   };
@@ -49,8 +48,8 @@ const HandleCard = () => {
       <Grid
         container
         columns={12}
-        gap={2}
-        sx={{ backgroundColor: "background.paper" , ml:1, mt:3}}
+        spacing={2}
+        sx={{ backgroundColor: "background.paper" , m:1, mt:3}}
       >
         {blogs.map((bls: bls, ind) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ind}>

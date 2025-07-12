@@ -14,6 +14,7 @@ const HandleLoginForm = () => {
         mutationKey: ["login"],
         mutationFn: async (loginData:{identifier:String, password:String}) => {
             const response = await axiosInstance.post("/auth/login", loginData);
+            console.log(response.data)
             return response.data;
         },
         onSuccess: () => {
