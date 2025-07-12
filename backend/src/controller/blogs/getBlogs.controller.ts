@@ -17,8 +17,9 @@ const getBlogs = asyncHandler(async (req: Request, res: Response) => {
       }
     }
   });
+
   if (blogs) {
-    res.status(200).send({ blogs: blogs });
+        res.status(200).send({ blogs: blogs });
     return;
   } else {
     res.status(404).send({ message: "No blogs found." });
