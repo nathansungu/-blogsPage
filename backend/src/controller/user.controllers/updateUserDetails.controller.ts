@@ -9,10 +9,11 @@ const client = new PrismaClient();
 const updateUserDetails = asyncHandler( async (req: Request, res: Response) => {
  
     const { id, ...otherData } = req.body;
+    const userId = req.user?.id
 
     const parsedData = updateUserSchema.parse(otherData);
     const updatedUser = await client.user.update({
-      where: { id: id },
+      where: { id: userId },
       data: parsedData,
     });
 

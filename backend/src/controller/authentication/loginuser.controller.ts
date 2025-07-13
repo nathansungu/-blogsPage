@@ -30,7 +30,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
 
   const { password, isDeleted, createdAt, updatedAt, ...userDetails } =  validIdentifiers;
   
-  const token = jwt.sign(userDetails, process.env.secretKey!, { expiresIn: "1h" });
+  const token = jwt.sign(userDetails, process.env.secretKey!, { expiresIn: "2h" });
   res
   .cookie("authTokencodey", token)
   .json({message:"login sucessful"});

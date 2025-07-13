@@ -12,13 +12,12 @@ const errorHandler = (
     console.error(error);
 
     switch (error.code) {
-      case "P1001":
+      case 'P1001':
         res.status(500).json({message:"Server is off"});
 
         break;
-      case "P2002":
+      case 'P2002':
         const target = error.meta?.target;
-
         res.status(409).json({message:`${target} is taken `});
         break;
 

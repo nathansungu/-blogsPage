@@ -16,7 +16,7 @@ const checkLogin = asyncHandler(
       process.env.secretKey!,
       (err: VerifyErrors | null, decoded: JwtPayload | string | undefined) => {
         if (err) {
-          res.status(401).json({ message: "Unauthorized: Login to proceed" , status:false});
+          res.status(401).json({ message: "Unauthorized: Login to proceed" });
           return;
         }
         req.user = decoded as UserPayload;
