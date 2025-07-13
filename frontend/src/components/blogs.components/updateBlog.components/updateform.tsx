@@ -63,7 +63,7 @@ const HandleUpdateBlogForm = () => {
   const { isPending, mutate } = useMutation({
     mutationKey: ["add-blog"],
     mutationFn: async (blogData: blog) => {
-      const response = await axiosInstance.patch(`/blogs/${90}`, blogData);
+      const response = await axiosInstance.patch(`/blogs/${id}`, blogData);
       const backendMessage = response.data.message;
       setBackendMessage({ message: backendMessage, state: true });
       return response.data;
@@ -196,7 +196,7 @@ const HandleUpdateBlogForm = () => {
                 sx={{ backgroundColor: "#3f51b5" }}
                 onClick={handleForm}
               >
-                Post
+                Update
               </Button>
             </Stack>
           </form>

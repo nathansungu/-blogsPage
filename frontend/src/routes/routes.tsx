@@ -6,6 +6,7 @@ import CreateBlogPage from "../pages/createBlog";
 import DashBoard from "../pages/dashboar";
 import UserBlogs from "../pages/useblogs";
 import UpdateBlog from "../pages/update";
+import Profile from "../pages/profile";
 const PagesRoutes = ()=>{
     return (
         <>
@@ -16,7 +17,8 @@ const PagesRoutes = ()=>{
             <Route path="/add-blog" element={<CreateBlogPage/>}/>
             <Route path="/dashboard" element={<DashBoard/>}/>    
             <Route path="/blogs"element= {<UserBlogs/>}/>  
-            <Route path="/update/blog/:id"element={<UpdateBlog/>}/>      
+            <Route path="/update/blog/:id"element={<UpdateBlog/>}/>   
+            <Route path = "/profile" element ={<Profile/>}/>   
         </Routes>
         </>
     )

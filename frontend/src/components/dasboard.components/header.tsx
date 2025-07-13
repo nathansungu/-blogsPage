@@ -34,7 +34,7 @@ const DashboardHeader = () => {
         >
           <Toolbar>
             <Box flexDirection={"row"}>
-              <Button  color="inherit">Profile</Button>
+              <Button href="/profile" color="inherit">Profile</Button>
               <Button href="/blogs" color="inherit">Blogs</Button>
             </Box>
           </Toolbar>
