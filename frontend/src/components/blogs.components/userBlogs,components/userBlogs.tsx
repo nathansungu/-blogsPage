@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   CardMedia,
@@ -7,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import axiosInstance from "../../api/axios";
+import axiosInstance from "../../../api/axios";
 import { useEffect, useState } from "react";
 
 type bls = {
@@ -23,14 +24,14 @@ type bls = {
   };
 };
 
-const HandleCard = () => {
-  const [error, setError] = useState("");
+const HandleUserCard = () => {
+  const [_error, setError] = useState("");
   const [blogs, setBlogs] = useState([]);
 
   const fetchBlogs = async () => {
-    const response = await axiosInstance.get("/blogs");
-    const { blogs } = response.data;
-    setBlogs(blogs);
+    const response = await axiosInstance.get("/blogs/user");
+    const { data } = response.data;
+    setBlogs(data);
     return;
   };
   
@@ -72,13 +73,28 @@ const HandleCard = () => {
                     {bls.user.secondName.charAt(0)}
                   </Avatar>
 
-                  <Stack sx={{ml:2}}direction="row" gap={2}>
+                  <Stack sx={{ml:1,width:"7rem", overflow:"hidden"}}direction="row" gap={2}>
                     <Typography>{bls.user.firstName}</Typography>
                     <Typography>{bls.user.secondName}</Typography>
                   </Stack>
                   <Stack direction="row" sx={{ ml: 1, alignItems:"center" }}>
                     
                     <Typography> {bls.createdAt.slice(0, 10)}</Typography>
+                  </Stack>
+
+                  <Stack direction="row" sx={{ml:1, }}spacing={2} width={"5rem"} >
+                    <Button
+                    variant="contained"
+                    href={`/update/blog/${bls.id}`}>
+                      Update
+                    </Button>
+                    <Button
+                    color="warning"
+                    variant="contained">
+                      <Typography>
+                        Delete
+                      </Typography>
+                    </Button>
                   </Stack>
                 </Stack>
               </CardContent>
@@ -90,4 +106,4 @@ const HandleCard = () => {
   );
 };
 
-export default HandleCard;
+export default HandleUserCard;
