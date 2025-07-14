@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import axiosInstance from "../../api/axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type bls = {
   id: string;
@@ -24,8 +25,9 @@ type bls = {
 };
 
 const HandleCard = () => {
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
   const [blogs, setBlogs] = useState([]);
+  const navigetor  = useNavigate()
 
   const fetchBlogs = async () => {
     const response = await axiosInstance.get("/blogs");
@@ -56,7 +58,11 @@ const HandleCard = () => {
       >
         {blogs.map((bls: bls, ind) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ind}>
-            <Card sx={{ height: "25rem", boxShadow: 2 }}>
+            <Card sx={{ height: "25rem", boxShadow: 2 }}
+            onClick={()=>{
+              navigetor(`/blog/${bls.id}`)
+            }}>
+              
               <CardMedia
                 component="img"
                 image={bls.imageUrl}
