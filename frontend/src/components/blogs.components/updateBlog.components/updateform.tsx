@@ -1,7 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../api/axios";
-import { Alert, Button, Grid, Stack, TextField } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CardMedia,
+  Grid,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 
 const HandleUpdateBlogForm = () => {
@@ -11,7 +18,6 @@ const HandleUpdateBlogForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   //add error states for the fields
-  const [imageUrlError, setImageUrlError] = useState("");
   const [synopsisError, setSynopsisError] = useState("");
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
@@ -38,13 +44,13 @@ const HandleUpdateBlogForm = () => {
   const { id } = useParams<{ id: string }>();
   const fetchBlogs = async () => {
     const blogs = await axiosInstance.get(`/blogs/${id}`);
-    const {blog} =blogs.data
-    setImageUrl(blog!.imageUrl)
-    setSynopsis(blog!.synopsis)
-    setTitle(blog!.title)
-    setContent(blog!.content)
-    
-    return 
+    const { blog } = blogs.data;
+    setImageUrl(blog!.imageUrl);
+    setSynopsis(blog!.synopsis);
+    setTitle(blog!.title);
+    setContent(blog!.content);
+
+    return;
   };
 
   useEffect(() => {
@@ -53,8 +59,8 @@ const HandleUpdateBlogForm = () => {
         fetchBlogs();
       } catch (e) {
         setError("Oops! Failed To Update Product");
-        window.location.href="/blogs"
-        alert(error)
+        window.location.href = "/blogs";
+        alert(error);
       }
     }
     getData();
@@ -87,7 +93,6 @@ const HandleUpdateBlogForm = () => {
   const handleForm = (e: React.FormEvent) => {
     e.preventDefault();
 
-    imgUrl ? setImageUrlError("") : setImageUrlError("Image is required");
     synopsis ? setSynopsisError("") : setSynopsisError("Synopsis is required");
     title ? setTitleError("") : setTitleError("Title is required");
     content ? setContentError("") : setContentError("Content is required");
@@ -128,24 +133,8 @@ const HandleUpdateBlogForm = () => {
                 <Alert security="error">{backedError.message}</Alert>
               )}
 
-              {backendMessage.state ||
-                (backedError.state &&
-                  setTimeout(() => {
-                    setBackendMessage({ message: "", state: false });
-                  }, 6000))}
-              <TextField
-                label="image"
-                variant="outlined"
-                type="text"
-                required
-                fullWidth
-                value={imgUrl}
-                onChange={(e) => {
-                  setImageUrl(e.target.value);
-                }}
-                error={!!imageUrlError}
-                helperText={imageUrlError}
-              />
+              <CardMedia component="img" image={imgUrl} sx={{height:"20rem"}}/>
+
               <TextField
                 label="title"
                 variant="outlined"
@@ -181,7 +170,6 @@ const HandleUpdateBlogForm = () => {
                 required
                 fullWidth
                 multiline
-                rows={5}
                 value={content}
                 onChange={(e) => {
                   setContent(e.target.value);
