@@ -11,7 +11,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: 'https://blogs-page-two.vercel.app/',
+    origin: 'https://blogs-page-two.vercel.app',
     credentials: true, 
 }));
 
