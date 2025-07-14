@@ -6,6 +6,7 @@ import {
   Stack,
   Typography,
   CardMedia,
+  Avatar,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import useUserStore from "../../store/userStates";
@@ -13,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axios";
 import HandleDrawer from "./drawer";
 const DashboardHeader = () => {
-  const { logout } = useUserStore();
+  const { logout, user } = useUserStore();
 
   const navigate = useNavigate();
   const logOutFunc = async () => {
@@ -50,16 +51,30 @@ const DashboardHeader = () => {
               <Button href="/profile" color="inherit">
                 Profile
               </Button>
-              <Button href="/blogs" color="inherit">
+              <Button href="/dashboard" color="inherit">
                 Blogs
+              </Button>
+              <Button href="/blogs" color="inherit">
+                My Blogs
               </Button>
               <Button href="/add-blog" color="inherit">
                 <AddIcon />
               </Button>
             </Box>
           </Toolbar>
+          
+          <Toolbar >
+            <Box >
+              <Typography>{`Welcome ${user?.secondName}`}</Typography>
+              
+            </Box>
+            <Avatar sx={{ textTransform: "capitalize" , ml:4}}>
+                {user?.firstName.charAt(0)}
+                {user?.secondName.charAt(0)}
+              </Avatar>
+          </Toolbar>
           <Toolbar>
-            <Box>
+            <Box >
               {/* <Button color="inherit"> Search</Button> */}
               <Button onClick={logOutFunc} color="inherit">
                 Logout
