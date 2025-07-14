@@ -63,6 +63,7 @@ const BlogDetailsPage = () => {
 
   return (
     <Container
+      
       maxWidth="md"
       sx={{
         mt: 4,

@@ -1,42 +1,39 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import axiosInstance from "../../../api/axios";
-import {
-  Alert,
-  Button,
-  Grid,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Alert, Button, Grid, Stack, TextField } from "@mui/material";
 import axios from "axios";
+type blog = {
+    imgUrl: string;
+    synopsis: string;
+    title: string;
+    content: string;
+  };
 
 const HandleCreateBlogForm = () => {
-  const [img, setImageUrl] = useState<File|null>(null);
+  const [img, setImage] = useState<File | null>(null);
   const [synopsis, setSynopsis] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   //add error states for the fields
-  const [imageUrlError, setImageUrlError] = useState("");
+  const [imageUrlError, imageError] = useState("");
   const [synopsisError, setSynopsisError] = useState("");
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
-  
+
+  const [isLoding, setIsloading] = useState(false);
+
   //set backend errors
   const [backedError, setBackendError] = useState({
-    message:"",
-    state:false
+    message: "",
+    state: false,
   });
   const [backendMessage, setBackendMessage] = useState({
     message: "",
     state: false,
   });
 
-  type blog = {
-    imgUrl: File;
-    synopsis: string;
-    title: string;
-    content: string;
-  };
+  
   const { isPending, mutate } = useMutation({
     mutationKey: ["add-blog"],
     mutationFn: async (blogData: blog) => {
@@ -46,58 +43,71 @@ const HandleCreateBlogForm = () => {
       return response.data;
     },
     onSuccess: () => {
-      setBackendError({message:"", state:false});
+      setBackendError({ message: "", state: false });
       setContent("");
       setTitle("");
-      setImageUrl(null);
+      setImage(null);
       setContent("");
       setSynopsis("");
-      // window.location.href="/dashboard"
-
+      window.location.href = "/blogs";
     },
     onError: (error: any) => {
       let bkError = error.response?.data?.messaage;
-      console.log();
-      setBackendError({message:bkError, state:true});
+      console.log(bkError);
+      setBackendError({ message: bkError, state: true });
     },
   });
-
-  const handleForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    uploadImage
-
-    img ? setImageUrlError("") : setImageUrlError("Image is required");
-    synopsis ? setSynopsisError("") : setSynopsisError("Synopsis is required");
-    title ? setTitleError("") : setTitleError("Title is required");
-    content ? setContentError("") : setContentError("Content is required");
-    const inputError = !img || !synopsis || !title || !content;
-    if (inputError) {
-      return;
+  const uploadImage = async () => {
+    if (!img) {
+      imageError("Image is required");
+      return null;
     }
+
+    const formData = new FormData();
+    formData.append("file", img);
+    formData.append("upload_preset", "codeyblogs");
+
+    try {
+      setIsloading(true);
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dgmbv5dfg/image/upload",
+        formData
+      );
+      const url = response.data.secure_url;
+      
+      return url;
+    } catch (error) {
+      imageError("Failed to upload image");
+      return null;
+    } finally {
+      setIsloading(false);
+    }
+  };
+
+  const handleForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const hasErrors = !img || !synopsis || !title || !content;
+    imageError(img ? "" : "Image is required");
+    setSynopsisError(synopsis ? "" : "Synopsis is required");
+    setTitleError(title ? "" : "Title is required");
+    setContentError(content ? "" : "Content is required");
+
+    if (hasErrors) return;
+
+    const uploadedUrl = await uploadImage();
+    if (!uploadedUrl) return;
+
     const blogData = {
-      imgUrl: img,
+      imgUrl: uploadedUrl,
       synopsis,
       title,
       content,
     };
+
     mutate(blogData);
   };
 
-  const uploadImage = async ()=>{
-    const formData= new FormData()
-    if(!img){
-      setImageUrlError("Image is required")
-      return
-      
-    }
-    formData.append("file", img)
-    formData.append("upload_preset", "codeyblogs")
-    const response =await axios.post("https://api.cloudinary.com/v1_1/dgmbv5dfg/image/upload", formData)
-    const url = response.data!.url
-    setImageUrl(url)
-  }
-  
-  
   return (
     <>
       <Grid
@@ -116,29 +126,21 @@ const HandleCreateBlogForm = () => {
               }}
             >
               {backendMessage.state && (
-                <Alert severity="success">
-                  {backendMessage.message}
-                </Alert>
+                <Alert severity="success">{backendMessage.message}</Alert>
               )}
-              
-              {backedError.state &&(
-                <Alert security="error">
-                  {backedError.message}
-                </Alert>
+
+              {backedError.state && (
+                <Alert security="error">{backedError.message}</Alert>
               )}
-              {imageUrlError&& (
-                <Alert>
-                  {imageUrlError}
-                </Alert>
-              )}
-                            
+              {imageUrlError && <Alert security="error">{imageUrlError}</Alert>}
+
               <input
                 name="Image"
                 type="file"
-                required                
+                required
                 onChange={(e) => {
                   const file = e.target.files?.[0] || null;
-                  setImageUrl(file);
+                  setImage(file);
                 }}
               />
               <TextField
@@ -187,11 +189,11 @@ const HandleCreateBlogForm = () => {
               <Button
                 type="submit"
                 color="primary"
-                loading={isPending}
                 sx={{ backgroundColor: "#3f51b5" }}
                 onClick={handleForm}
+                disabled={isLoding || isPending}
               >
-                Post
+                {isLoding ? "Uploading..." : isPending ? "Posting..." : "Post"}
               </Button>
             </Stack>
           </form>
