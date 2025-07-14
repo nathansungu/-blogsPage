@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -25,7 +26,7 @@ type bls = {
 };
 
 const HandleUserCard = () => {
-  const [_error, setError] = useState("");
+  const [error, setError] = useState("");
   const [blogs, setBlogs] = useState([]);
 
   const fetchBlogs = async () => {
@@ -39,7 +40,7 @@ const HandleUserCard = () => {
   useEffect(() => {
     async function getBlogs() {
       try {
-        fetchBlogs();
+        await fetchBlogs();
       } catch (e) {
         setError("Ooops! Something went Wrong");
       }
@@ -47,17 +48,28 @@ const HandleUserCard = () => {
     getBlogs();
   }, []);
 
+  const deleteProduct = async(id:string)=>{
+    const response = await axiosInstance.delete(`/blogs/${id}`)
+    await fetchBlogs()
+    const {message}= response.data;
+    setError(message);
+  }
+
   return (
     <>
+    {error  && <Alert>{error}</Alert>}
+    
       <Grid
         container
         columns={12}
         spacing={2}
         sx={{ backgroundColor: "background.paper" , m:1, mt:3}}
       >
+        
         {blogs.map((bls: bls, ind) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ind}>
             <Card sx={{ height: "25rem", boxShadow: 2 }}>
+              
               <CardMedia
                 component="img"
                 image={bls.imageUrl}
@@ -90,7 +102,8 @@ const HandleUserCard = () => {
                     </Button>
                     <Button
                     color="warning"
-                    variant="contained">
+                    variant="contained"
+                    onClick={()=>deleteProduct(bls.id)}>
                       <Typography>
                         Delete
                       </Typography>

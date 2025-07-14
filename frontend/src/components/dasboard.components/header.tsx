@@ -7,9 +7,22 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-
+import AddIcon from "@mui/icons-material/Add";
+import useUserStore from "../../store/userStates";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axios";
+import HandleDrawer from "./drawer";
 const DashboardHeader = () => {
+  const { logout } = useUserStore();
+
+  const navigate = useNavigate();
+  const logOutFunc = async () => {
+    await axiosInstance.get("auth/logout");
+
+    logout();
+    navigate("/");
+  };
+
   return (
     <AppBar position="static" color="primary" sx={{ ml: 0.2, mr: 0.1 }}>
       <Stack direction="row" justifyContent="space-around" fontSize="bold">
@@ -34,23 +47,31 @@ const DashboardHeader = () => {
         >
           <Toolbar>
             <Box flexDirection={"row"}>
-              <Button href="/profile" color="inherit">Profile</Button>
-              <Button href="/blogs" color="inherit">Blogs</Button>
+              <Button href="/profile" color="inherit">
+                Profile
+              </Button>
+              <Button href="/blogs" color="inherit">
+                Blogs
+              </Button>
+              <Button href="/add-blog" color="inherit">
+                <AddIcon />
+              </Button>
             </Box>
           </Toolbar>
           <Toolbar>
             <Box>
-              <Button color="inherit"> Search</Button>
-              <Button color="inherit">Logout</Button>
+              {/* <Button color="inherit"> Search</Button> */}
+              <Button onClick={logOutFunc} color="inherit">
+                Logout
+              </Button>
             </Box>
           </Toolbar>
+        </Stack>
+        <Toolbar>
+          <Stack sx={{ display: { xs: "block", sm: "none", md: "none" } }}>
+            <HandleDrawer />
           </Stack>
-          <Toolbar>
-            <Stack sx={{display:{ xs:"flex", sm:"none", md:"none", xl:"none"}}}>
-              <MenuIcon />
-            </Stack>
-          </Toolbar>
-        
+        </Toolbar>
       </Stack>
     </AppBar>
   );

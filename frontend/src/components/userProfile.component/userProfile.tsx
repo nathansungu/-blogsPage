@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useUserStore from "../../store/userStates";
 import axiosInstance from "../../api/axios";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
   Grid,
   Paper,
-  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -25,39 +25,43 @@ const HandleUserProfile = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [userName, setUserName] = useState("");
 
-  const [error, setError] = useState({ message: "", status: false });
-  const [sucess, setSucess] = useState({ message: "", status: false });
-  const [response, setResponse] = useState({ message: "", status: false });
+  const [error, setError] = useState( false );
+  const [response, setResponse] = useState("");
 
   const { user } = useUserStore();
-  if (!user) {
-    window.location.href = "/login";
-    return;
-  }
-  setFirstName(user.firstName);
-  setSecondName(user.secondName);
-  setEmailAddress(user.emailAddress);
-  setUserName(user.userName);
 
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName);
+      setSecondName(user.secondName);
+      setEmailAddress(user.emailAddress);
+      setUserName(user.userName);
+    }
+  }, [user]);
   const { isPending, mutate } = useMutation({
     mutationKey: ["update-profile"],
     mutationFn: async (userDetails: userDetails) => {
       const response = await axiosInstance.patch("/user", userDetails);
       const { message } = response.data;
-      setResponse({ message: message, status: true });
+      setResponse(message);
+      console.log(response)
       return response.data;
     },
     onSuccess: () => {
       setEditMode(false);
-      setSucess({ message: response.message, status: true });
+      setError(false);
     },
-    onError: () => {
-      setError({ message: response.message, status: true });
+    onError: (error:any) => {
+      const reError = error.response?.data.message || error.message 
+      setResponse(reError)
+      setError( true);
     },
   });
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(false)
+    setResponse("")
 
     const userDetails: userDetails = {
       firstName,
@@ -81,9 +85,11 @@ const HandleUserProfile = () => {
       elevation={3}
       sx={{ maxWidth: 600, margin: "2rem auto", padding: 4 }}
     >
+      {error && <Alert color="error">{response}</Alert>}
+      {!error&& !!response && <Alert color="success">{response}</Alert>}
       <Grid container spacing={2} alignItems="center">
         <Grid size={{ xs: 12, sm: 4 }} textAlign="center">
-          <Avatar sx={{ width: 120, height: 120, margin: "0 auto" }}>
+          <Avatar sx={{ width: 120, height: 120, margin: "0 auto", fontSize:"4rem" }}>
             {firstName.charAt(0)}
             {secondName.charAt(0)}
           </Avatar>
@@ -94,21 +100,6 @@ const HandleUserProfile = () => {
           </Typography>
 
           <Box component="form">
-            {error.status && (
-              <Snackbar open 
-              autoHideDuration={3000}
-               message={error.message} 
-               color="error"/>
-            )}
-            {sucess.status && (
-              <Snackbar
-                open
-                autoHideDuration={3000}
-                message={sucess.message}
-                color="success"
-              />
-            )}
-
             <TextField
               margin="dense"
               label="First Name"
@@ -176,7 +167,10 @@ const HandleUserProfile = () => {
                 </Button>
               </>
             ) : (
-              <Button variant="outlined" onClick={() => setEditMode(true)}>
+              <Button variant="outlined" onClick={() => {setEditMode(true)
+                setError(false);
+                 setResponse("")
+              }}>
                 Edit Profile
               </Button>
             )}

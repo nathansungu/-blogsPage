@@ -8,7 +8,7 @@ const AuthChecker = () => {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const response = await axiosInstance.get('auth/me')
+        const response = await axiosInstance.get("/auth/me")
         const { data } = response.data  
         setUser(data) 
       } catch (e) {
@@ -19,7 +19,7 @@ const AuthChecker = () => {
     checkLogin()
   }, [setUser])
 
-  return 
+  return null
 }
 
 export default AuthChecker

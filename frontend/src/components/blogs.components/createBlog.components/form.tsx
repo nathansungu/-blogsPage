@@ -8,9 +8,10 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 
 const HandleCreateBlogForm = () => {
-  const [imgUrl, setImageUrl] = useState("");
+  const [img, setImageUrl] = useState<File|null>(null);
   const [synopsis, setSynopsis] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -19,7 +20,7 @@ const HandleCreateBlogForm = () => {
   const [synopsisError, setSynopsisError] = useState("");
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
-
+  
   //set backend errors
   const [backedError, setBackendError] = useState({
     message:"",
@@ -31,7 +32,7 @@ const HandleCreateBlogForm = () => {
   });
 
   type blog = {
-    imgUrl: string;
+    imgUrl: File;
     synopsis: string;
     title: string;
     content: string;
@@ -48,12 +49,11 @@ const HandleCreateBlogForm = () => {
       setBackendError({message:"", state:false});
       setContent("");
       setTitle("");
-      setImageUrl("");
+      setImageUrl(null);
       setContent("");
       setSynopsis("");
-      // window.location.href="/home"
+      // window.location.href="/dashboard"
 
-      //TODO: redirect to that specific blog
     },
     onError: (error: any) => {
       let bkError = error.response?.data?.messaage;
@@ -64,23 +64,40 @@ const HandleCreateBlogForm = () => {
 
   const handleForm = (e: React.FormEvent) => {
     e.preventDefault();
+    uploadImage
 
-    imgUrl ? setImageUrlError("") : setImageUrlError("Image is required");
+    img ? setImageUrlError("") : setImageUrlError("Image is required");
     synopsis ? setSynopsisError("") : setSynopsisError("Synopsis is required");
     title ? setTitleError("") : setTitleError("Title is required");
     content ? setContentError("") : setContentError("Content is required");
-    const inputError = !imgUrl || !synopsis || !title || !content;
+    const inputError = !img || !synopsis || !title || !content;
     if (inputError) {
       return;
     }
     const blogData = {
-      imgUrl,
+      imgUrl: img,
       synopsis,
       title,
       content,
     };
     mutate(blogData);
   };
+
+  const uploadImage = async ()=>{
+    const formData= new FormData()
+    if(!img){
+      setImageUrlError("Image is required")
+      return
+      
+    }
+    formData.append("file", img)
+    formData.append("upload_preset", "codeyblogs")
+    const response =await axios.post("https://api.cloudinary.com/v1_1/dgmbv5dfg/image/upload", formData)
+    const url = response.data!.url
+    setImageUrl(url)
+  }
+  
+  
   return (
     <>
       <Grid
@@ -109,25 +126,23 @@ const HandleCreateBlogForm = () => {
                   {backedError.message}
                 </Alert>
               )}
-              
-              {backendMessage.state || backedError.state && setTimeout(() => {
-                setBackendMessage({ message: "", state: false });
-              }, 6000)}
-              <TextField
-                label="image"
-                variant="outlined"
-                type="text"
-                required
-                fullWidth
-                value={imgUrl}
+              {imageUrlError&& (
+                <Alert>
+                  {imageUrlError}
+                </Alert>
+              )}
+                            
+              <input
+                name="Image"
+                type="file"
+                required                
                 onChange={(e) => {
-                  setImageUrl(e.target.value);
+                  const file = e.target.files?.[0] || null;
+                  setImageUrl(file);
                 }}
-                error={!!imageUrlError}
-                helperText={imageUrlError}
               />
               <TextField
-                label="title"
+                label="Title"
                 variant="outlined"
                 type="text"
                 required
@@ -140,7 +155,7 @@ const HandleCreateBlogForm = () => {
                 helperText={titleError}
               />
               <TextField
-                label="synopsis"
+                label="Synopsis"
                 variant="outlined"
                 type="text"
                 required
@@ -155,7 +170,7 @@ const HandleCreateBlogForm = () => {
                 helperText={synopsisError}
               />
               <TextField
-                label="content"
+                label="Content"
                 variant="outlined"
                 type="text"
                 required
