@@ -5,6 +5,7 @@ import {
   CardMedia,
   Grid,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import axiosInstance from "../../api/axios";
@@ -58,7 +59,8 @@ const HandleCard = () => {
       >
         {blogs.map((bls: bls, ind) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ind}>
-            <Card sx={{ height: "25rem", boxShadow: 2 }}
+            <Tooltip title="Click To View More">
+              <Card sx={{ height: "30rem", boxShadow: 2 }}
             onClick={()=>{
               navigetor(`/blog/${bls.id}`)
             }}>
@@ -70,17 +72,22 @@ const HandleCard = () => {
                 sx={{ height: "15rem" }}
               />
               <CardContent>
+                <Stack>
+                  <Typography sx={{textTransform:"capitalize",fontSize:"1.5rem"}}>
+                    {bls.title}
+                  </Typography>
+                </Stack>
                 <Stack sx={{height:"4.6rem", overflow:"hidden"}}><Typography>{bls.synopsis}</Typography></Stack>
               
                 <Stack direction="row" sx={{ alignItems: "center", mt:2 }}>
-                  <Avatar>
+                  <Avatar sx={{backgroundColor:"grey"}}>
                     {bls.user.firstName.charAt(0)}
                     {bls.user.secondName.charAt(0)}
                   </Avatar>
 
                   <Stack sx={{ml:2}}direction="row" gap={2}>
-                    <Typography>{bls.user.firstName}</Typography>
-                    <Typography>{bls.user.secondName}</Typography>
+                    <Typography sx={{fontSize:"1.3rem"}}>{bls.user.firstName}</Typography>
+                    <Typography sx={{fontSize:"1.3rem"}}>{bls.user.secondName}</Typography>
                   </Stack>
                   <Stack direction="row" sx={{ ml: 1, alignItems:"center" }}>
                     
@@ -89,6 +96,9 @@ const HandleCard = () => {
                 </Stack>
               </CardContent>
             </Card>
+
+            </Tooltip>
+            
           </Grid>
         ))}
       </Grid>

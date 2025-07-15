@@ -10,7 +10,6 @@ const HandleHeader = () => {
       >
         <Grid size={{ sm: 8, md: 6, xs: 10 }}>
           <Stack direction="row" alignItems="center">
-            <Stack sx={{ width: "70%" }}>
               <Typography
                 variant="h6"
                 sx={{
@@ -22,12 +21,8 @@ const HandleHeader = () => {
               >
                 share your thoughts 
               </Typography>
-            </Stack>
-            <Stack>
-              <Button>
-                <Typography>Home</Typography>
-              </Button>
-            </Stack>
+           
+            
           </Stack>
         </Grid>
       </Grid>

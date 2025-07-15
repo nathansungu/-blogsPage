@@ -70,7 +70,7 @@ const BlogDetailsPage = () => {
         bgcolor: theme.palette.background.default,
         color: theme.palette.text.primary,
         borderRadius: 2,
-        p: 3,
+        p: 2,
       }}
     >
       <CardMedia
@@ -85,12 +85,12 @@ const BlogDetailsPage = () => {
       </Typography>
 
       <Typography
-        variant="subtitle1"
+        variant="h6"
         sx={{ color: "text.secondary" }}
         gutterBottom
       >
         {blog.user?.firstName} 
-        {/* {blog.user?.secondName} ·{" "} */}
+        {blog.user?.secondName} 
         {new Date(blog.createdAt).toLocaleDateString()}
       </Typography>
 
