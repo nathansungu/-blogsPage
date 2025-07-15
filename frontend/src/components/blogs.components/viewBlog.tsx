@@ -89,7 +89,8 @@ const BlogDetailsPage = () => {
         sx={{ color: "text.secondary" }}
         gutterBottom
       >
-        {blog.user?.firstName} {blog.user?.secondName} ·{" "}
+        {blog.user?.firstName} 
+        {/* {blog.user?.secondName} ·{" "} */}
         {new Date(blog.createdAt).toLocaleDateString()}
       </Typography>
 

@@ -2,6 +2,8 @@ import { Button, Stack, TextField,Grid } from "@mui/material";
 import { useState } from "react";
 import axiosInstance from "../../api/axios";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import useUserStore from "../../store/userStates";
 
 const HandleLoginForm = () => {
 
@@ -9,11 +11,16 @@ const HandleLoginForm = () => {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
+    const navigate=  useNavigate()
+    const {setUser} = useUserStore()
+
 
     const {isPending,isError, mutate} = useMutation({
         mutationKey: ["login"],
         mutationFn: async (loginData:{identifier:String, password:String}) => {
             const response = await axiosInstance.post("/auth/login", loginData);
+            const {data} = response.data
+            setUser(data)
             return response.data;
         },
         onSuccess: () => {
@@ -21,7 +28,7 @@ const HandleLoginForm = () => {
             setIdentifier("");
             setPassword("");
 
-            window.location.href = "/dashboard";
+            navigate("/dashboard");
         },
         onError: (error:any) => {
             const reError = error.response?.data || error.message 

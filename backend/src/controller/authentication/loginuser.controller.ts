@@ -45,7 +45,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
       secure: true,
       sameSite: "none",    })
 
-    .json({ message: "login sucessful" });
+    .json({ data:userDetails,message: "Login sucessful" });
 
   return;
 });
