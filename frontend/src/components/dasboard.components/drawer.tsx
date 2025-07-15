@@ -59,8 +59,10 @@ function HandleDrawer() {
           <List>
             {[
               { name: "Profile", link: "/profile" },
+              {name: "Blogs", link:"/dashboard"},
               { name: "My Blogs", link: "/blogs" },
               { name: "Add Blog", link: "/add-blog" },
+              
             ].map((dst, ind) => (
               <ListItem key={ind}>
                 <Button component={Link} to={dst.link}>
