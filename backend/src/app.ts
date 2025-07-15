@@ -12,7 +12,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
     // 
-    origin: 'https://blogs-page-zx75.vercel.app/',
+    origin: 'https://blogs-page-zx75.vercel.app',
     credentials: true, 
 }));
 
