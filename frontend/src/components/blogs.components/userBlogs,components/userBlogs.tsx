@@ -29,15 +29,20 @@ type bls = {
 };
 
 const HandleUserCard = () => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [blogs, setBlogs] = useState([]);
+  const [operationMessage, setOperationMessage] = useState("")
 
   const navigate = useNavigate()
 
   const fetchBlogs = async () => {
+    setIsLoading(true)
     const response = await axiosInstance.get("/blogs/user");
-    const { data } = response.data;
+    const { data , message} = response.data;
     setBlogs(data);
+    setOperationMessage(message)
+    setIsLoading(false)
     return;
   };
 
@@ -45,8 +50,11 @@ const HandleUserCard = () => {
     async function getBlogs() {
       try {
         await fetchBlogs();
+        setError(false)
       } catch (e) {
-        setError("Ooops! Something went Wrong");
+        setError(true);
+      }finally{
+        setOperationMessage("")
       }
     }
     getBlogs();
@@ -56,12 +64,46 @@ const HandleUserCard = () => {
     const response = await axiosInstance.delete(`/blogs/${id}`);
     await fetchBlogs();
     const { message } = response.data;
-    setError(message);
+    setOperationMessage(message);
   };
 
   return (
     <>
-      {error && <Alert>{error}</Alert>}
+      {error && (
+          <Stack
+            sx={{ mt: "50%", justifyContent: "center", alignItems: "center" }}
+          >
+            <Typography
+              sx={{
+                textTransform: "capitalize",
+                textAlign: "center",
+                color: "red",
+                fontSize: "1.5rem",
+              }}
+            >
+              failed to fetch feeds
+            </Typography>
+          </Stack>
+        )}
+        {isLoading && (
+          <Stack
+            sx={{ width: "100%", height: "50vh", justifyContent: "center" }}
+          >
+            <Typography
+              sx={{
+                textTransform: "capitalize",
+                textAlign: "center",
+                color: "green",
+                fontSize: "1.5rem",
+              }}
+            >
+              loading feeds, please wait ...
+            </Typography>
+          </Stack>
+        )}
+        {operationMessage&&
+        <Alert>
+          {operationMessage}</Alert>}
 
       <Grid
         container
